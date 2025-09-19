@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from models import Prompt, History, Role
 from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 import requests
 import json
@@ -38,6 +39,19 @@ BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "https://multi-model-chatbot-gdgc-task-round.vercel.app/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = True, 
+    allow_methods = ["*"],
+    allow_headers = ["*"] 
+)
 
 
 @app.get("/")
@@ -78,7 +92,7 @@ async def chat(prompt: Prompt):
 
     try:
         response = requests.post(
-            BASE_URL, headers=headers, json=data
+            BASE_URL, headers=headers, json=data, timeout=30
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:

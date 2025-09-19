@@ -58,13 +58,33 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
   )
 
   async function handleSend() {
-    if (!value.trim() || sending) return
+    console.log("🟡 Composer handleSend called");
+    console.log("🟡 Current value:", value);
+    console.log("🟡 Value trimmed:", value.trim());
+    console.log("🟡 Sending state:", sending);
+    console.log("🟡 onSend prop:", onSend);
+    
+    if (!value.trim() || sending) {
+      console.log("🔴 Exiting handleSend - empty value or already sending");
+      return;
+    }
+    
+    console.log("🟡 Setting sending to true");
     setSending(true)
+    
     try {
+      console.log("🟡 About to call onSend with:", value);
+      // onSend is now async and handles the API call
       await onSend?.(value)
+      console.log("🟡 onSend completed successfully");
       setValue("")
       inputRef.current?.focus()
+      console.log("🟡 Cleared input and focused");
+    } catch (error) {
+      console.error("🔴 Failed to send message:", error)
+      // Don't clear the input on error so user can retry
     } finally {
+      console.log("🟡 Setting sending to false");
       setSending(false)
     }
   }
@@ -132,22 +152,6 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="mx-auto mt-2 max-w-3xl px-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-        Press{" "}
-        <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 dark:border-zinc-600 dark:bg-zinc-800">
-          Enter
-        </kbd>{" "}
-        to send ·{" "}
-        <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 dark:border-zinc-600 dark:bg-zinc-800">
-          Shift
-        </kbd>
-        +
-        <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 dark:border-zinc-600 dark:bg-zinc-800">
-          Enter
-        </kbd>{" "}
-        for newline
       </div>
     </div>
   )

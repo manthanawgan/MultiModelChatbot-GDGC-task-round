@@ -6,6 +6,7 @@ from typing import List
 class Role(str, Enum):
     user = "user"
     system = "system"
+    assistant = "assistant"
 
 
 class History(BaseModel):
@@ -24,5 +25,5 @@ class Models(str, Enum):        #free models
 
 class Prompt(BaseModel):
     message: str
-    model: Models
+    model: Models = Models.meta_llama_3_8b_free     #default for now i'll change it later if needed
     history: List[History] = [] 

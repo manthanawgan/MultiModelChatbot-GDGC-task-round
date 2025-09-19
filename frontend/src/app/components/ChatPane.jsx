@@ -156,15 +156,25 @@ const ChatPane = forwardRef(function ChatPane(
       </div>
 
       <Composer
-        ref={composerRef}
-        onSend={async (text) => {
-          if (!text.trim()) return
-          setBusy(true)
+      ref={composerRef}
+      onSend={async (text) => {
+        console.log("🟡 ChatPane onSend called with:", text);
+        console.log("🟡 ChatPane onSend prop:", onSend);
+        if (!text.trim()) return
+        setBusy(true)
+        try {
+          console.log("🟡 About to call onSend prop...");
           await onSend?.(text)
+          console.log("🟡 onSend prop completed successfully");
+        } catch (error) {
+          console.error("🔴 Error in ChatPane onSend:", error)
+        } finally {
+          console.log("🟡 Setting busy to false");
           setBusy(false)
-        }}
-        busy={busy}
-      />
+        }
+      }}
+      busy={busy}
+    />
     </div>
   )
 })
