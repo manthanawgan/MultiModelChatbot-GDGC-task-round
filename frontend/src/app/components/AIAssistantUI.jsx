@@ -207,7 +207,7 @@ async function sendMessage(convId, content) {
     console.log("🟡 Sending to API:", JSON.stringify(requestData, null, 2));
 
     // Call FastAPI backend
-    const response = await fetch("https://multimodelchatbot-gdgc-task-round.onrender.com", {
+    const response = await fetch("https://multimodelchatbot-gdgc-task-round.onrender.com/api/v1/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
