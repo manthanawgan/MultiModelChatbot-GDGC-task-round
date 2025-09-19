@@ -42,7 +42,8 @@ app = FastAPI()
 
 origins = [
     "http://localhost:3000",
-    "https://multi-model-chatbot-gdgc-task-round.vercel.app/"
+    "https://multi-model-chatbot-gdgc-task-round.vercel.app/",
+    "https://multimodelchatbot-gdgc-task-round.onrender.com"
 ]
 
 app.add_middleware(
