@@ -4,11 +4,10 @@ import { useState } from "react"
 import GhostIconButton from "./GhostIconButton"
 
 export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen }) {
-  const [selectedBot, setSelectedBot] = useState("GPT-5")
+  const [selectedBot, setSelectedBot] = useState("meta-llama-3.3")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const chatbots = [
-    { name: "meta-llama-3.3"},
     { name: "deepseek-v3"},
     { name: "gemma-3n"},
     { name: "qwen3-14b"},
