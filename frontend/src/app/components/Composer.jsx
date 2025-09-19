@@ -58,33 +58,20 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
   )
 
   async function handleSend() {
-    console.log("🟡 Composer handleSend called");
-    console.log("🟡 Current value:", value);
-    console.log("🟡 Value trimmed:", value.trim());
-    console.log("🟡 Sending state:", sending);
-    console.log("🟡 onSend prop:", onSend);
-    
     if (!value.trim() || sending) {
-      console.log("🔴 Exiting handleSend - empty value or already sending");
       return;
     }
     
-    console.log("🟡 Setting sending to true");
     setSending(true)
     
     try {
-      console.log("🟡 About to call onSend with:", value);
-      // onSend is now async and handles the API call
       await onSend?.(value)
-      console.log("🟡 onSend completed successfully");
       setValue("")
       inputRef.current?.focus()
-      console.log("🟡 Cleared input and focused");
     } catch (error) {
-      console.error("🔴 Failed to send message:", error)
-      // Don't clear the input on error so user can retry
+      console.error("Failed to send message:", error)
     } finally {
-      console.log("🟡 Setting sending to false");
+      console.log("Setting sending to false");
       setSending(false)
     }
   }

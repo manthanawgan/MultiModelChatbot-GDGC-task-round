@@ -140,7 +140,7 @@ export default function AIAssistantUI() {
       preview: "Say hello to start...",
       pinned: false,
       folder: "Work Projects",
-      messages: [], // Ensure messages array is empty for new chats
+      messages: [], 
     }
     setConversations((prev) => [item, ...prev])
     setSelectedId(id)
@@ -154,23 +154,18 @@ export default function AIAssistantUI() {
     setFolders((prev) => [...prev, { id: Math.random().toString(36).slice(2), name }])
   }
 
-  // Replace the existing sendMessage function in AIAssistantUI.jsx with this:
 
 async function sendMessage(convId, content) {
-  console.log("🟡 Starting sendMessage", { convId, content });
   
   if (!content.trim()) return
   const now = new Date().toISOString()
   const userMsg = { id: Math.random().toString(36).slice(2), role: "user", content, createdAt: now }
 
-  console.log("🟡 User message created:", userMsg);
 
-  // Add user message to conversation
   setConversations((prev) => {
     const updated = prev.map((c) => {
       if (c.id !== convId) return c
       const msgs = [...(c.messages || []), userMsg]
-      console.log("🟡 Updated messages for conv:", msgs);
       return {
         ...c,
         messages: msgs,
@@ -179,34 +174,26 @@ async function sendMessage(convId, content) {
         preview: content.slice(0, 80),
       }
     })
-    console.log("🟡 All conversations updated:", updated);
     return updated;
   })
 
-  // Set thinking state
   setIsThinking(true)
   setThinkingConvId(convId)
 
   try {
-    // Get current conversation to build history
     const currentConv = conversations.find(c => c.id === convId)
-    console.log("🟡 Current conversation:", currentConv);
     
     const chatHistory = (currentConv?.messages || []).map(msg => ({
       role: msg.role === 'user' ? 'user' : 'assistant',
       content: msg.content
     }))
-    console.log("🟡 Chat history for API:", chatHistory);
 
-    // Use the correct model from your enum
     const requestData = {
       message: content,
       model: "meta-llama/llama-3.3-8b-instruct:free", // This matches your default enum value
       history: chatHistory
     };
-    console.log("🟡 Sending to API:", JSON.stringify(requestData, null, 2));
 
-    // Call FastAPI backend
     const response = await fetch("https://multimodelchatbot-gdgc-task-round.onrender.com/api/v1/chat", {
       method: "POST",
       headers: {
@@ -215,21 +202,17 @@ async function sendMessage(convId, content) {
       body: JSON.stringify(requestData),
     })
 
-    console.log("🟡 API Response status:", response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("🔴 API Error response:", errorText);
+      console.error("API Error response:", errorText);
       throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`)
     }
 
     const data = await response.json()
-    console.log("🟡 API Response data:", data);
     
     const aiResponse = data.response
-    console.log("🟡 AI Response:", aiResponse);
 
-    // Add AI response to conversation
     setConversations((prev) => {
       const updated = prev.map((c) => {
         if (c.id !== convId) return c
@@ -239,10 +222,8 @@ async function sendMessage(convId, content) {
           content: aiResponse,
           createdAt: new Date().toISOString(),
         }
-        console.log("🟡 Assistant message created:", asstMsg);
         
         const msgs = [...(c.messages || []), asstMsg]
-        console.log("🟡 Final messages array:", msgs);
         
         return {
           ...c,
@@ -252,14 +233,12 @@ async function sendMessage(convId, content) {
           preview: asstMsg.content.slice(0, 80),
         }
       })
-      console.log("🟡 Final conversations state:", updated);
       return updated;
     })
 
   } catch (error) {
     console.error("Error calling backend API:", error)
     
-    // Add error message to conversation
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id !== convId) return c
@@ -280,8 +259,6 @@ async function sendMessage(convId, content) {
       }),
     )
   } finally {
-    // Always clear thinking state
-    console.log("🟡 Clearing thinking state");
     setIsThinking(false)
     setThinkingConvId(null)
   }
@@ -318,8 +295,6 @@ async function sendMessage(convId, content) {
   }
 
   function handleUseTemplate(template) {
-    // This will be passed down to the Composer component
-    // The Composer will handle inserting the template content
     if (composerRef.current) {
       composerRef.current.insertTemplate(template.content)
     }
@@ -383,12 +358,10 @@ async function sendMessage(convId, content) {
             ref={composerRef}
             conversation={selected}
             onSend={async (content) => {
-                console.log("🟡 AIAssistantUI onSend called with:", content);
                 if (selected) {
-                console.log("🟡 Selected conversation:", selected.id);
                 await sendMessage(selected.id, content);
                 } else {
-                console.log("🔴 No selected conversation!");
+                console.log("No selected conversation!");
                 }
             }}
             onEditMessage={(messageId, newContent) => selected && editMessage(selected.id, messageId, newContent)}
